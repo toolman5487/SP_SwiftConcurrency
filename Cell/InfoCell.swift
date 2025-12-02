@@ -4,6 +4,15 @@ import SnapKit
 class InfoCell: UITableViewCell {
     static let identifier = "InfoCell"
     
+    private let stackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.spacing = 4
+        stack.alignment = .fill
+        stack.distribution = .fill
+        return stack
+    }()
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .medium)
@@ -29,17 +38,13 @@ class InfoCell: UITableViewCell {
     }
     
     private func setupUI() {
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(valueLabel)
+        contentView.addSubview(stackView)
+        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(valueLabel)
         selectionStyle = .none
         
-        titleLabel.snp.makeConstraints { make in
+        stackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(12)
-            make.leading.trailing.equalToSuperview().inset(20)
-        }
-        
-        valueLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(4)
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().offset(-12)
         }
@@ -47,7 +52,20 @@ class InfoCell: UITableViewCell {
     
     func configure(title: String, value: String) {
         titleLabel.text = title
-        valueLabel.text = value
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 4
+        
+        let attributed = NSAttributedString(
+            string: value,
+            attributes: [
+                .font: UIFont.systemFont(ofSize: 16),
+                .foregroundColor: UIColor.label,
+                .paragraphStyle: paragraphStyle
+            ]
+        )
+        
+        valueLabel.attributedText = attributed
     }
 }
 

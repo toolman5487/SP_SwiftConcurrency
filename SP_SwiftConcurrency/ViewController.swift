@@ -151,12 +151,20 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
             
         case .email:
             let cell = tableView.dequeueReusableCell(withIdentifier: InfoCell.identifier, for: indexPath) as! InfoCell
-            cell.configure(title: "Email", value: user.email)
+            let value = """
+            \(user.email)
+            Username: \(user.login.username)
+            """
+            cell.configure(title: "Email", value: value)
             return cell
             
         case .phone:
             let cell = tableView.dequeueReusableCell(withIdentifier: InfoCell.identifier, for: indexPath) as! InfoCell
-            cell.configure(title: "Phone", value: user.phone)
+            let value = """
+            Phone: \(user.phone)
+            Cell: \(user.cell)
+            """
+            cell.configure(title: "Phone", value: value)
             return cell
         }
     }
