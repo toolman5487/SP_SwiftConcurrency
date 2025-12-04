@@ -1,8 +1,10 @@
 import UIKit
 import SnapKit
 
-class InfoCell: UITableViewCell {
-    static let identifier = "InfoCell"
+final class InfoCell: UITableViewCell {
+    static var identifier: String {
+        String(describing: self)
+    }
     
     private let stackView: UIStackView = {
         let stack = UIStackView()

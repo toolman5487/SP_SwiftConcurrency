@@ -7,19 +7,19 @@
 
 import Foundation
 
-struct RandomUserResponse: Codable {
+struct RandomUserResponse: Codable, Sendable {
     let results: [User]
     let info: ResponseInfo
 }
 
-struct ResponseInfo: Codable {
+struct ResponseInfo: Codable, Sendable {
     let seed: String
     let results: Int
     let page: Int
     let version: String
 }
 
-struct User: Codable, Identifiable {
+struct User: Codable, Identifiable, Sendable {
     let gender: String
     let name: Name
     let location: Location
@@ -43,12 +43,12 @@ struct User: Codable, Identifiable {
     }
 }
 
-struct UserID: Codable {
+struct UserID: Codable, Sendable {
     let name: String?
     let value: String?
 }
 
-struct Name: Codable {
+struct Name: Codable, Sendable {
     let title: String
     let first: String
     let last: String
@@ -58,7 +58,7 @@ struct Name: Codable {
     }
 }
 
-struct Location: Codable {
+struct Location: Codable, Sendable {
     let street: Street
     let city: String
     let state: String
@@ -72,7 +72,7 @@ struct Location: Codable {
     }
 }
 
-struct Postcode: Codable {
+struct Postcode: Codable, Sendable {
     let value: String
     
     init(from decoder: Decoder) throws {
@@ -90,22 +90,22 @@ struct Postcode: Codable {
     }
 }
 
-struct Street: Codable {
+struct Street: Codable, Sendable {
     let number: Int
     let name: String
 }
 
-struct Coordinates: Codable {
+struct Coordinates: Codable, Sendable {
     let latitude: String
     let longitude: String
 }
 
-struct Timezone: Codable {
+struct Timezone: Codable, Sendable {
     let offset: String
     let description: String
 }
 
-struct Login: Codable {
+struct Login: Codable, Sendable {
     let uuid: String
     let username: String
     let password: String
@@ -115,17 +115,17 @@ struct Login: Codable {
     let sha256: String
 }
 
-struct DateOfBirth: Codable {
+struct DateOfBirth: Codable, Sendable {
     let date: String
     let age: Int
 }
 
-struct Registered: Codable {
+struct Registered: Codable, Sendable {
     let date: String
     let age: Int
 }
 
-struct Picture: Codable {
+struct Picture: Codable, Sendable {
     let large: String
     let medium: String
     let thumbnail: String

@@ -2,9 +2,11 @@ import UIKit
 import SnapKit
 import SDWebImage
 
-class ProfileImageCell: UITableViewCell {
+final class ProfileImageCell: UITableViewCell {
     
-    static let identifier = "ProfileImageCell"
+    static var identifier: String {
+        String(describing: self)
+    }
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()

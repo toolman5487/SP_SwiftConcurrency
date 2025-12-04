@@ -1,8 +1,10 @@
 import UIKit
 import SnapKit
 
-class NameAgeCell: UITableViewCell {
-    static let identifier = "NameAgeCell"
+final class NameAgeCell: UITableViewCell {
+    static var identifier: String {
+        String(describing: self)
+    }
     
     private let nameLabel: UILabel = {
         let label = UILabel()
@@ -34,14 +36,14 @@ class NameAgeCell: UITableViewCell {
         selectionStyle = .none
         
         nameLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(16)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
         }
         
         ageLabel.snp.makeConstraints { make in
             make.top.equalTo(nameLabel.snp.bottom).offset(8)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().offset(-16)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().offset(-8)
         }
     }
     

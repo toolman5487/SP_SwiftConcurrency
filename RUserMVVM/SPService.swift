@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum RandomUserServiceError: LocalizedError {
+enum RandomUserServiceError: LocalizedError, Sendable {
     case invalidURL
     case emptyResults
     
@@ -26,7 +26,7 @@ protocol RandomUserServiceProtocol: Sendable {
     func fetchUser() async throws -> User
 }
 
-final class RandomUserService: RandomUserServiceProtocol {
+final class RandomUserService: RandomUserServiceProtocol, @unchecked Sendable {
     
     static let shared = RandomUserService()
     

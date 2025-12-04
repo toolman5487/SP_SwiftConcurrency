@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum NetworkError: LocalizedError {
+enum NetworkError: LocalizedError, Sendable {
     case invalidResponse
     case httpStatus(Int)
-    case decoding(DecodingError)
+    case decoding(String)
     
     var errorDescription: String? {
         switch self {
@@ -18,8 +18,8 @@ enum NetworkError: LocalizedError {
             return "Invalid server response."
         case .httpStatus(let code):
             return "Request failed with status code \(code)."
-        case .decoding(let error):
-            return "Decoding error: \(error.localizedDescription)"
+        case .decoding(let message):
+            return "Decoding error: \(message)"
         }
     }
 }
@@ -28,7 +28,7 @@ protocol NetworkClientProtocol: Sendable {
     func request<T: Decodable>(_ request: URLRequest, as type: T.Type) async throws -> T
 }
 
-final class NetworkClient: NetworkClientProtocol {
+final class NetworkClient: NetworkClientProtocol, @unchecked Sendable {
     private let session: URLSession
     
     init(session: URLSession = .shared) {
@@ -64,8 +64,8 @@ final class NetworkClient: NetworkClientProtocol {
         
         do {
             return try decoder.decode(T.self, from: data)
-        } catch let decodingError as DecodingError {
-            throw NetworkError.decoding(decodingError)
+        } catch {
+            throw NetworkError.decoding(error.localizedDescription)
         }
     }
 }

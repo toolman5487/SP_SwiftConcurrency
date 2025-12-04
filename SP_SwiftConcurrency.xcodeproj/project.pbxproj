@@ -11,6 +11,10 @@
 		15C046552EDEE12F003A814E /* LocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C046482EDEE12F003A814E /* LocationCell.swift */; };
 		15C046562EDEE12F003A814E /* NameAgeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C046492EDEE12F003A814E /* NameAgeCell.swift */; };
 		15C046572EDEE12F003A814E /* ProfileImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15C0464A2EDEE12F003A814E /* ProfileImageCell.swift */; };
+		15F9734A2EE160890073DBA6 /* SPModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F9733F2EE160890073DBA6 /* SPModel.swift */; };
+		15F9734B2EE160890073DBA6 /* SPService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F973402EE160890073DBA6 /* SPService.swift */; };
+		15F9734C2EE160890073DBA6 /* SPViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F973412EE160890073DBA6 /* SPViewModel.swift */; };
+		15F9734D2EE160890073DBA6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F973422EE160890073DBA6 /* ViewController.swift */; };
 		1704F70B2ECB1E1F00EA02B5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 1704F70A2ECB1E1F00EA02B5 /* Alamofire */; };
 		1704F70E2ECB1E4800EA02B5 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 1704F70D2ECB1E4800EA02B5 /* SnapKit */; };
 		1704F7112ECB1E6200EA02B5 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 1704F7102ECB1E6200EA02B5 /* SDWebImage */; };
@@ -21,6 +25,10 @@
 		15C046482EDEE12F003A814E /* LocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCell.swift; sourceTree = "<group>"; };
 		15C046492EDEE12F003A814E /* NameAgeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameAgeCell.swift; sourceTree = "<group>"; };
 		15C0464A2EDEE12F003A814E /* ProfileImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCell.swift; sourceTree = "<group>"; };
+		15F9733F2EE160890073DBA6 /* SPModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPModel.swift; sourceTree = "<group>"; };
+		15F973402EE160890073DBA6 /* SPService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPService.swift; sourceTree = "<group>"; };
+		15F973412EE160890073DBA6 /* SPViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SPViewModel.swift; sourceTree = "<group>"; };
+		15F973422EE160890073DBA6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		170434222ECB1B7300EA02B5 /* SP_SwiftConcurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SP_SwiftConcurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -70,10 +78,22 @@
 			path = Cell;
 			sourceTree = "<group>";
 		};
+		15F9734E2EE1610C0073DBA6 /* RUserMVVM */ = {
+			isa = PBXGroup;
+			children = (
+				15F9733F2EE160890073DBA6 /* SPModel.swift */,
+				15F973402EE160890073DBA6 /* SPService.swift */,
+				15F973412EE160890073DBA6 /* SPViewModel.swift */,
+				15F973422EE160890073DBA6 /* ViewController.swift */,
+				15C092522EDEEC75003A814E /* Cell */,
+			);
+			path = RUserMVVM;
+			sourceTree = "<group>";
+		};
 		170434192ECB1B7300EA02B5 = {
 			isa = PBXGroup;
 			children = (
-				15C092522EDEEC75003A814E /* Cell */,
+				15F9734E2EE1610C0073DBA6 /* RUserMVVM */,
 				170434242ECB1B7300EA02B5 /* SP_SwiftConcurrency */,
 				170434232ECB1B7300EA02B5 /* Products */,
 			);
@@ -173,6 +193,10 @@
 				15C046552EDEE12F003A814E /* LocationCell.swift in Sources */,
 				15C046562EDEE12F003A814E /* NameAgeCell.swift in Sources */,
 				15C046572EDEE12F003A814E /* ProfileImageCell.swift in Sources */,
+				15F9734A2EE160890073DBA6 /* SPModel.swift in Sources */,
+				15F9734B2EE160890073DBA6 /* SPService.swift in Sources */,
+				15F9734C2EE160890073DBA6 /* SPViewModel.swift in Sources */,
+				15F9734D2EE160890073DBA6 /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

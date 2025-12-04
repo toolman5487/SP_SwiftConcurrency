@@ -1,10 +1,12 @@
 import UIKit
 import SnapKit
 
-class ViewController: UIViewController {
+@MainActor
+final class ViewController: UIViewController {
     
     private let viewModel = SPViewModel()
-    private var currentUser: User?
+    private var buttonObserverTask: Task<Void, Never>?
+    private var loadUserTask: Task<Void, Never>?
     
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -19,9 +21,20 @@ class ViewController: UIViewController {
         button.backgroundColor = .systemBlue
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 12
-        button.contentEdgeInsets = UIEdgeInsets(top: 14, left: 16, bottom: 14, right: 16)
         return button
     }()
+    
+    private lazy var reloadButtonTapStream = reloadButton.tapStream()
+
+    private func observeReloadButton() {
+        buttonObserverTask = Task { [weak self] in
+            guard let self else { return }
+            for await _ in reloadButtonTapStream {
+                guard !self.viewModel.isLoading else { continue }
+                self.loadUser()
+            }
+        }
+    }
     
     private let loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
@@ -46,7 +59,13 @@ class ViewController: UIViewController {
         self.title = "RandomUser"
         setupUI()
         setupTableView()
+        observeReloadButton()
         loadUser()
+    }
+    
+    deinit {
+        loadUserTask?.cancel()
+        buttonObserverTask?.cancel()
     }
     
     private func setupUI() {
@@ -70,8 +89,6 @@ class ViewController: UIViewController {
         loadingIndicator.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-        
-        reloadButton.addTarget(self, action: #selector(didTapReload), for: .touchUpInside)
     }
     
     private func setupTableView() {
@@ -85,32 +102,37 @@ class ViewController: UIViewController {
     }
     
     private func loadUser() {
-        loadingIndicator.startAnimating()
+        loadUserTask?.cancel()
         
-        Task { [weak self] in
+        loadUserTask = Task { @MainActor [weak self] in
             guard let self else { return }
+            guard !Task.isCancelled else { return }
             
-            do {
-                let user = try await self.viewModel.loadUser()
-                self.currentUser = user
-                self.tableView.reloadData()
-            } catch {
-                self.showError(error)
+            self.loadingIndicator.startAnimating()
+            self.reloadButton.isEnabled = false
+            
+            await self.viewModel.loadUser()
+            
+            guard !Task.isCancelled else {
+                self.loadingIndicator.stopAnimating()
+                self.reloadButton.isEnabled = true
+                return
             }
             
             self.loadingIndicator.stopAnimating()
+            self.reloadButton.isEnabled = true
+            self.tableView.reloadData()
+            
+            if let errorMessage = self.viewModel.errorMessage {
+                self.showError(message: errorMessage)
+            }
         }
     }
     
-    @objc
-    private func didTapReload() {
-        loadUser()
-    }
-    
-    private func showError(_ error: Error) {
+    private func showError(message: String) {
         let alert = UIAlertController(
             title: "Error",
-            message: error.localizedDescription,
+            message: message,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "OK", style: .default))
@@ -129,60 +151,61 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let section = Section(rawValue: indexPath.section),
-              let user = currentUser else {
+              let user = viewModel.user else {
             return UITableViewCell()
         }
         
         switch section {
         case .profileImage:
-            let cell = tableView.dequeueReusableCell(withIdentifier: ProfileImageCell.identifier, for: indexPath) as! ProfileImageCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ProfileImageCell.identifier, for: indexPath) as? ProfileImageCell else {
+                return UITableViewCell()
+            }
             cell.configure(with: user.picture.large)
             return cell
             
         case .nameAge:
-            let cell = tableView.dequeueReusableCell(withIdentifier: NameAgeCell.identifier, for: indexPath) as! NameAgeCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: NameAgeCell.identifier, for: indexPath) as? NameAgeCell else {
+                return UITableViewCell()
+            }
             cell.configure(name: user.name.fullName, age: user.dob.age)
             return cell
             
         case .location:
-            let cell = tableView.dequeueReusableCell(withIdentifier: LocationCell.identifier, for: indexPath) as! LocationCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: LocationCell.identifier, for: indexPath) as? LocationCell else {
+                return UITableViewCell()
+            }
             cell.configure(city: user.location.city, state: user.location.state, country: user.location.country)
             return cell
             
         case .email:
-            let cell = tableView.dequeueReusableCell(withIdentifier: InfoCell.identifier, for: indexPath) as! InfoCell
-            let value = """
-            \(user.email)
-            Username: \(user.login.username)
-            """
-            cell.configure(title: "Email", value: value)
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: InfoCell.identifier, for: indexPath) as? InfoCell else {
+                return UITableViewCell()
+            }
+            cell.configure(title: "Email", value: viewModel.formattedEmailInfo() ?? "")
             return cell
             
         case .phone:
-            let cell = tableView.dequeueReusableCell(withIdentifier: InfoCell.identifier, for: indexPath) as! InfoCell
-            let value = """
-            Phone: \(user.phone)
-            Cell: \(user.cell)
-            """
-            cell.configure(title: "Phone", value: value)
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: InfoCell.identifier, for: indexPath) as? InfoCell else {
+                return UITableViewCell()
+            }
+            cell.configure(title: "Phone", value: viewModel.formattedPhoneInfo() ?? "")
             return cell
         }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let section = Section(rawValue: indexPath.section) else {
-            return UITableView.automaticDimension
-        }
-        
-        switch section {
-        case .profileImage:
-            return UITableView.automaticDimension
-        case .nameAge:
-            return UITableView.automaticDimension
-        case .location:
-            return UITableView.automaticDimension
-        case .email, .phone:
-            return UITableView.automaticDimension
+        UITableView.automaticDimension
+    }
+}
+
+extension UIButton {
+    @MainActor
+    func tapStream() -> AsyncStream<Void> {
+        AsyncStream { continuation in
+            let action = UIAction { _ in
+                continuation.yield(())
+            }
+            self.addAction(action, for: .touchUpInside)
         }
     }
 }

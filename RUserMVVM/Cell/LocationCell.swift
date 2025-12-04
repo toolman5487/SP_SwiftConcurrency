@@ -1,8 +1,10 @@
 import UIKit
 import SnapKit
 
-class LocationCell: UITableViewCell {
-    static let identifier = "LocationCell"
+final class LocationCell: UITableViewCell {
+    static var identifier: String {
+        String(describing: self)
+    }
     
     private let locationLabel: UILabel = {
         let label = UILabel()
@@ -27,9 +29,9 @@ class LocationCell: UITableViewCell {
         selectionStyle = .none
         
         locationLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(16)
+            make.top.equalToSuperview()
             make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().offset(-16)
+            make.bottom.equalToSuperview()
         }
     }
     
